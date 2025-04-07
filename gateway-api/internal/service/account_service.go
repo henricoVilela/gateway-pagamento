@@ -46,3 +46,19 @@ func (s *AccountService) UpdateBalance(apiKey string, amount float64) (*dto.Acco
 	}
 	return dto.FromAccount(account), nil
 }
+
+func (s *AccountService) FindByAPIKey(apiKey string) (*dto.AccountOutput, error) {
+	account, err := s.repository.FindByAPIKey(apiKey)
+	if err != nil {
+		return nil, err
+	}
+	return dto.FromAccount(account), nil
+}
+
+func (s *AccountService) FindByID(id string) (*dto.AccountOutput, error) {
+	account, err := s.repository.FindByID(id)
+	if err != nil {
+		return nil, err
+	}
+	return dto.FromAccount(account), nil
+}
