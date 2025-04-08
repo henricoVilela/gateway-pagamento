@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/henricoVilela/gateway-pagamento/gateway-api/internal/domain"
 	"github.com/henricoVilela/gateway-pagamento/gateway-api/internal/dto"
 	"github.com/henricoVilela/gateway-pagamento/gateway-api/internal/service"
