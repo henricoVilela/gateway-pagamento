@@ -1,7 +1,7 @@
 services:
   gateway_db:
     image: postgres:17.4
-    container_name: postgres_db
+    container_name: gateway_db
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
