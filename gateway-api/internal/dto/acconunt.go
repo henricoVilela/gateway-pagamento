@@ -18,10 +18,7 @@ type AccountOutput struct {
 }
 
 func ToAccount(input CreateAccountInput) *domain.Account {
-	return &domain.Account{
-		Name:  input.Name,
-		Email: input.Email,
-	}
+	return domain.NewAccount(input.Name, input.Email)
 }
 
 func FromAccount(account *domain.Account) *AccountOutput {
@@ -30,6 +27,7 @@ func FromAccount(account *domain.Account) *AccountOutput {
 		Name:      account.Name,
 		Email:     account.Email,
 		Balance:   account.Balance,
+		APIKey:    account.APIKey,
 		CreatedAt: account.CreatedAt.Format("2006-01-02 15:04:05"),
 		UpdatedAt: account.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
