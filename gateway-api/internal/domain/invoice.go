@@ -21,7 +21,7 @@ type Invoice struct {
 	Amount         float64
 	Description    string
 	Status         Status
-	PaymantType    string
+	PaymentType    string
 	CardLastDigits string
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
@@ -49,7 +49,7 @@ func NewInvoice(accountID string, amount float64, description string, paymentTyp
 		Amount:         amount,
 		Description:    description,
 		Status:         StatusPending,
-		PaymantType:    paymentType,
+		PaymentType:    paymentType,
 		CardLastDigits: lastDigits,
 		CreatedAt:      time.Now(),
 		UpdatedAt:      time.Now(),
