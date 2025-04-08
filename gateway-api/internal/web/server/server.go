@@ -19,12 +19,9 @@ type Server struct {
 
 func NewServer(accountService *service.AccountService, invoiceService *service.InvoiceService, port string) *Server {
 	return &Server{
-		router: chi.NewRouter(),
-		server: &http.Server{
-			Addr:    ":" + port,
-			Handler: nil,
-		},
+		router:         chi.NewRouter(),
 		accountService: accountService,
+		invoiceService: invoiceService,
 		port:           port,
 	}
 }
@@ -46,7 +43,9 @@ func (s *Server) ConfigureRoutes() {
 }
 
 func (s *Server) Start() error {
-	s.ConfigureRoutes()
-	s.server.Handler = s.router
+	s.server = &http.Server{
+		Addr:    ":" + s.port,
+		Handler: s.router,
+	}
 	return s.server.ListenAndServe()
 }
