@@ -1,7 +1,6 @@
 services:
   gateway_db:
     image: postgres:17.4
-    restart: always
     container_name: postgres_db
     environment:
       POSTGRES_PASSWORD: postgres
