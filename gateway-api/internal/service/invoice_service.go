@@ -7,10 +7,10 @@ import (
 
 type InvoiceService struct {
 	invoiceRepository domain.InvoiceRepository
-	accountService    AccountService
+	accountService    *AccountService
 }
 
-func NewInvoiceService(invoiceRepository domain.InvoiceRepository, accountService AccountService) *InvoiceService {
+func NewInvoiceService(invoiceRepository domain.InvoiceRepository, accountService *AccountService) *InvoiceService {
 	return &InvoiceService{
 		invoiceRepository: invoiceRepository,
 		accountService:    accountService,
