@@ -22,7 +22,7 @@ func getEnv(key string, defautValue string) string {
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
+		log.Println(("Error loading .env file"))
 	}
 
 	connStr := fmt.Sprintf(

@@ -1,32 +1,30 @@
-# Use the official Golang image as a build stage
-FROM golang:1.24 AS builder
+FROM golang:1.24 as build
 
-# Set the working directory
 WORKDIR /app
 
-# Copy go.mod and go.sum files
-COPY go.mod go.sum ./
+# Copy the Go module files
+COPY go.mod .
+COPY go.sum .
 
-# Download dependencies
+# Download the Go module dependencies
 RUN go mod download
 
-# Copy the rest of the application code
 COPY . .
 
-# Build the application
-RUN go build -o gateway-api .
+# Compile estaticamente para evitar dependências dinâmicas
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o myapp ./cmd/app
 
-# Use a minimal image for the final stage
-FROM alpine:latest
+FROM alpine:latest as run
 
-# Set the working directory
-WORKDIR /root/
+WORKDIR /app
 
-# Copy the built binary from the builder stage
-COPY --from=builder /app/gateway-api .
+# Copia o executável mantendo o mesmo caminho relativo
+COPY --from=build /app/myapp .
 
-# Expose the application port
-EXPOSE 8081
+# Garante permissões de execução
+RUN chmod +x ./myapp
 
-# Start the application
-CMD ["./gateway-api"]
+EXPOSE 8080
+
+# Usa o caminho correto para o executável
+CMD ["./myapp"]

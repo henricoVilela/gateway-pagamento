@@ -24,9 +24,15 @@ services:
       dockerfile: Dockerfile
     container_name: gateway_api
     environment:
-      DATABASE_URL: postgres://postgres:postgres@gateway_db:5432/gateway
+      HTTP_PORT: 8080
+      DB_NAME: gateway
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: gateway_db
+      DB_PORT: 5432
+      DB_SSL_MODE: disable
     ports:
-      - "3000:3000"
+      - "8080:8080"
     depends_on:
       gateway_db:
         condition: service_healthy
