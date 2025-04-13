@@ -41,6 +41,15 @@ func main() {
 	}
 	defer db.Close()
 
+	// Configura e inicializa o Kafka
+	baseKafkaConfig := service.NewKafkaConfig()
+
+	// Configura e inicializa o produtor Kafka
+	producerTopic := getEnv("KAFKA_PRODUCER_TOPIC", "pending_transactions")
+	producerConfig := baseKafkaConfig.WithTopic(producerTopic)
+	kafkaProducer := service.NewKafkaProducer(producerConfig)
+	defer kafkaProducer.Close()
+
 	accountRepository := repository.NewAccountRepository(db)
 	accountService := service.NewAccountService(accountRepository)
 
