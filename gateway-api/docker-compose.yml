@@ -25,7 +25,7 @@ services:
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
@@ -56,26 +56,33 @@ services:
         echo 'Tópicos criados com sucesso!'"
 
   gateway_api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: gateway_api
-    environment:
-      HTTP_PORT: 8080
-      DB_NAME: gateway
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_HOST: gateway_db
-      DB_PORT: 5432
-      DB_SSL_MODE: disable
+    build: .
     ports:
-      - "8080:8080"
-    depends_on:
-      gateway_db:
-        condition: service_healthy
-      kafka-init:
-        condition: service_completed_successfully      
-    restart: unless-stopped
+      - 8080:8080
+    volumes:
+      - .:/home/go/app
+
+  # gateway_api:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: gateway_api
+  #   environment:
+  #     HTTP_PORT: 8080
+  #     DB_NAME: gateway
+  #     DB_USER: postgres
+  #     DB_PASSWORD: postgres
+  #     DB_HOST: gateway_db
+  #     DB_PORT: 5432
+  #     DB_SSL_MODE: disable
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     gateway_db:
+  #       condition: service_healthy
+  #     kafka-init:
+  #       condition: service_completed_successfully      
+  #   restart: unless-stopped
 
 volumes:
   postgres_data:

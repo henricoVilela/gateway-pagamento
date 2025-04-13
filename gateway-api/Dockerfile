@@ -1,30 +1,45 @@
-FROM golang:1.24 as build
+FROM golang:1.24
 
-WORKDIR /app
+RUN apt update && \
+    apt install openssl procps -y
 
-# Copy the Go module files
-COPY go.mod .
-COPY go.sum .
+# Criar o usuário go com diretório home
+RUN useradd -m -d /home/go -s /bin/bash go
 
-# Download the Go module dependencies
-RUN go mod download
+# Mudar para o usuário go
+USER go
 
-COPY . .
+WORKDIR /home/go/app
 
-# Compile estaticamente para evitar dependências dinâmicas
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o myapp ./cmd/app
+CMD [ "tail", "-f", "/dev/null" ]
 
-FROM alpine:latest as run
+# FROM golang:1.24 as build
 
-WORKDIR /app
+# WORKDIR /app
 
-# Copia o executável mantendo o mesmo caminho relativo
-COPY --from=build /app/myapp .
+# # Copy the Go module files
+# COPY go.mod .
+# COPY go.sum .
 
-# Garante permissões de execução
-RUN chmod +x ./myapp
+# # Download the Go module dependencies
+# RUN go mod download
 
-EXPOSE 8080
+# COPY . .
 
-# Usa o caminho correto para o executável
-CMD ["./myapp"]
+# # Compile estaticamente para evitar dependências dinâmicas
+# RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o myapp ./cmd/app
+
+# FROM alpine:latest as run
+
+# WORKDIR /app
+
+# # Copia o executável mantendo o mesmo caminho relativo
+# COPY --from=build /app/myapp .
+
+# # Garante permissões de execução
+# RUN chmod +x ./myapp
+
+# EXPOSE 8080
+
+# # Usa o caminho correto para o executável
+# CMD ["./myapp"]
