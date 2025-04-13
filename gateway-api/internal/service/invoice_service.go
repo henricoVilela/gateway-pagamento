@@ -1,19 +1,28 @@
 package service
 
 import (
+	"context"
+
 	"github.com/henricoVilela/gateway-pagamento/gateway-api/internal/domain"
+	"github.com/henricoVilela/gateway-pagamento/gateway-api/internal/domain/events"
 	"github.com/henricoVilela/gateway-pagamento/gateway-api/internal/dto"
 )
 
 type InvoiceService struct {
 	invoiceRepository domain.InvoiceRepository
 	accountService    *AccountService
+	kafkaProducer     KafkaProducerInterface
 }
 
-func NewInvoiceService(invoiceRepository domain.InvoiceRepository, accountService *AccountService) *InvoiceService {
+func NewInvoiceService(
+	invoiceRepository domain.InvoiceRepository,
+	accountService *AccountService,
+	kafkaProducer KafkaProducerInterface,
+) *InvoiceService {
 	return &InvoiceService{
 		invoiceRepository: invoiceRepository,
 		accountService:    accountService,
+		kafkaProducer:     kafkaProducer,
 	}
 }
 
@@ -30,6 +39,20 @@ func (s *InvoiceService) Create(input dto.CreateInvoiceInput) (*dto.InvoiceOutpu
 
 	if err := invoice.Process(); err != nil {
 		return nil, err
+	}
+
+	// Se o status for pending, significa que é uma transação de alto valor
+	if invoice.Status == domain.StatusPending {
+		// Criar e publicar evento de transação pendente
+		pendingTransaction := events.NewPendingTransaction(
+			invoice.AccountID,
+			invoice.ID,
+			invoice.Amount,
+		)
+
+		if err := s.kafkaProducer.SendingPendingTransaction(context.Background(), *pendingTransaction); err != nil {
+			return nil, err
+		}
 	}
 
 	if invoice.Status == domain.StatusApproved {
