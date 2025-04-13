@@ -55,7 +55,7 @@ func main() {
 	accountService := service.NewAccountService(accountRepository)
 
 	invoiceRepository := repository.NewInvoiceRepository(db)
-	invoiceService := service.NewInvoiceService(invoiceRepository, *accountService, kafkaProducer)
+	invoiceService := service.NewInvoiceService(invoiceRepository, accountService, kafkaProducer)
 
 	// Configura e inicializa o consumidor Kafka
 	consumerTopic := getEnv("KAFKA_CONSUMER_TOPIC", "transaction_results")
